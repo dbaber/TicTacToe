@@ -1,0 +1,29 @@
+1. POST /game - Creates a new game
+request payload:
+{
+    "x_player_name": 1234,
+    "o_player_name": 1235,
+}
+
+response payload:
+- Statuses are "running" or "complete"
+{
+    "gampley": ["_", "_", "_", "_", "", "", "", "", ""],
+    "x_player_id": 1234,
+    "o_player_id": 1235,
+    "status": "running",
+    "current_player_id": 1235,
+    "winning_player_id": null,
+}
+
+2. GET /game/<id> - Fetches a game
+response payload:
+- Statuses are "running" or "complete"
+{
+    "board": ["", "", "", "", "", "", "", "", ""],
+    "x_player_id": 1234,
+    "o_player_id": 1235,
+    "status": "running",
+    "current_player_id": 1235,
+    "winning_player_id": null,
+}

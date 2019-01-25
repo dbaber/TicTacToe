@@ -1,0 +1,6 @@
+wget
+perl
+perl-dev
+perl-app-cpanminus
+make
+g++

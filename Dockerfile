@@ -10,11 +10,11 @@ RUN set -ex && \
 RUN set -ex && \
     cpanm Carton
 
-#ENV PERL_CARTON_PATH=/local
-#ENV PERL_CARTON_CPANFILE=/cpanfile
+ENV PERL_CARTON_PATH=/local
+ENV PERL_CARTON_CPANFILE=/cpanfile
 
-#COPY cpanfile cpanfile.snapshot /
-#RUN set -ex && \
-#	carton install --deployment --cpanfile=/cpanfile && \
-#	rm -rf /local/cache && \
-#	rm -rf /root/.cpanm
+COPY cpanfile cpanfile.snapshot /
+RUN set -ex && \
+	carton install --deployment --cpanfile=/cpanfile && \
+	rm -rf /local/cache && \
+	rm -rf /root/.cpanm

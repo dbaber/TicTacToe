@@ -18,3 +18,5 @@ RUN set -ex && \
 	carton install --deployment --cpanfile=/cpanfile && \
 	rm -rf /local/cache && \
 	rm -rf /root/.cpanm
+
+WORKDIR /opt/tictactoe

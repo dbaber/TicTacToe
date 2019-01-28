@@ -16,8 +16,8 @@ POST /api/game HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
-	"x_player_name": "Dan",
-	"x_goes_first": true
+    "x_player_name": "Dan",
+    "x_goes_first": true
 }
 ```
 
@@ -25,17 +25,17 @@ Content-Type: application/json
 ```
 200 OK
 {
-	"game_id": 1,
-	"is_public": true,
-	"x_player_name": "Dan",
-	"x_player_id": 1,
-	"y_player_name": null,
-	"y_player_id": null,
-	"current_player_id: 1,
-	"status": "waiting",
+    "game_id": 1,
+    "is_public": true,
+    "x_player_name": "Dan",
+    "x_player_id": 1,
+    "y_player_name": null,
+    "y_player_id": null,
+    "current_player_id": 1,
+    "status": "waiting",
     "winning_player_id": null,
     "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-	"auth_code": "SOME_RANDOM_STRING"
+    "auth_code": "SOME_RANDOM_STRING"
 }
 ```
 
@@ -85,32 +85,32 @@ Content-Type: application/json
 ```
 200 OK
 [
-	{
-		"game_id": 1,
-		"is_public": true,
-		"x_player_name": "Dan",
-		"x_player_id": 1,
-		"y_player_name": null,
-		"y_player_id": null,
-		"current_player_id: 1,
-		"status": "waiting",
-		"winning_player_id": null,
-		"board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-		"auth_code": "SOME_RANDOM_STRING"
-	},
-	{
-		"game_id": 2,
-		"is_public": true,
-		"x_player_name": "Ben",
-		"x_player_id": 2,
-		"y_player_name": null,
-		"y_player_id": null,
-		"current_player_id: null,
-		"status": "waiting",
-		"winning_player_id": null,
-		"board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-		"auth_code": "SOME_RANDOM_STRING"
-	}
+    {
+        "game_id": 1,
+        "is_public": true,
+        "x_player_name": "Dan",
+        "x_player_id": 1,
+        "y_player_name": null,
+        "y_player_id": null,
+        "current_player_id": 1,
+        "status": "waiting",
+        "winning_player_id": null,
+        "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
+        "auth_code": "SOME_RANDOM_STRING"
+    },
+    {
+        "game_id": 2,
+        "is_public": true,
+        "x_player_name": "Ben",
+        "x_player_id": 2,
+        "y_player_name": null,
+        "y_player_id": null,
+        "current_player_id": null,
+        "status": "waiting",
+        "winning_player_id": null,
+        "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
+        "auth_code": "SOME_RANDOM_STRING"
+    }
 ]
 ```
 
@@ -124,8 +124,8 @@ POST /api/game/:id/join HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
-	"player_name": "Ben",
-	"auth_code": "SOME_RANDOM_STRING"
+    "player_name": "Ben",
+    "auth_code": "SOME_RANDOM_STRING"
 }
 ```
 
@@ -136,17 +136,17 @@ whichever marker is available and either gets to go first or second depending up
 ```
 200 OK
 {
-	"game_id": 1,
-	"is_public": true,
-	"x_player_name": "Dan",
-	"x_player_id": 1,
-	"y_player_name": "Ben",
-	"y_player_id": 2,
-	"current_player_id: 1,
-	"status": "running",
-	"winning_player_id": null,
-	"board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-	"auth_code": "SOME_RANDOM_STRING"
+    "game_id": 1,
+    "is_public": true,
+    "x_player_name": "Dan",
+    "x_player_id": 1,
+    "y_player_name": "Ben",
+    "y_player_id": 2,
+    "current_player_id": 1,
+    "status": "running",
+    "winning_player_id": null,
+    "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
+    "auth_code": "SOME_RANDOM_STRING"
 }
 ```
 

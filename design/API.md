@@ -1,14 +1,14 @@
 # Tic Tac Toe REST API
 
-Tic Tac Toe REST API using Dancer2 and a SQLite database.
+Tic Tac Toe REST API using Dancer2 and an SQLite database.
 
 ## Create a new game
 
-When creating a new game the user's name is required and the user get's to decide who will go first and whether or not
-that player wishes to use an X or O to make their moves. We do this by supplying either `x_player_name` or
-`y_player_name` in the payload along with `x_goes_first` or `y_goes_first` boolean value. The game also starts
-in the `waiting` status and no moves can be executed until another player joins the game and changes the game status
-to `running`.
+When creating a new game player1's name is required and the user gets to decide who will go first and whether or not
+that player wishes to use an 'X' or 'O' to make their moves. We do this by supplying the `player_name`, a `player_mark`
+of 'X' or 'O' in the payload along with a `goes_first` value of 'player1' or 'player2'. The game also starts in the
+`waiting` status and no moves can be executed until another player joins the game with the proper game authorization
+code. Once the game is joined then the game status changes to `running`.
 
 **Example Request** - Player wants to be X and go first
 ```
@@ -16,8 +16,9 @@ POST /api/game HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
-    "x_player_name": "Dan",
-    "x_goes_first": true
+	"player1_name": "Dan",
+	"player1_mark": "X",
+	"goes_first": "player1,
 }
 ```
 
@@ -27,48 +28,36 @@ Content-Type: application/json
 {
     "game_id": 1,
     "is_public": true,
-    "x_player_name": "Dan",
-    "x_player_id": 1,
-    "y_player_name": null,
-    "y_player_id": null,
-    "current_player_id": 1,
+    "player1_name": "Dan",
+    "player1_id": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+    "player1_mark": "X",
+    "player2_name": null,
+    "player2_id": null,
+    "player2_mark": "O"
+    "current_player_id": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
     "status": "waiting",
     "winning_player_id": null,
-    "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-    "auth_code": "SOME_RANDOM_STRING"
+    "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
 }
 ```
 
-**NOTE**: I might make the board a regular 1 dimensional array, still debating that.
-
-In the response above we have 'Dan' choosing the 'X' marker and choosing to go first. There is no 'Y' player yet, 'Dan'
+In the response above we have 'Dan' choosing the 'X' marker and deciding to go first. There is no 'Y' player yet, 'Dan'
 is the current player or the first one to move, the game status is 'waiting' for another player to join (the 'Y'
-player), there is no winning player and the game board is empty. The `game_id`, `x_player_id` and `y_player_id` are all
-generated ids. There is also a generated authorization code that is used to validate subsequent game operations. This is
-an attempt at simple security and to prevent other people from randomly hijacking a game. Althought real user
+player), there is no winning player and the game board is empty. The `game_id`, `player1_id` and `player2_id` are all
+generated ids. There is also a generated game authorization code that is used to validate the join operation. The
+geneerated player ids are used to validate games moves in conjunction with the game authorization code.  This is an
+attempt at simple security and to prevent other people from randomly hijacking a game. Althought real user
 authentication would go a long way.
 
-We could've easily chose 'Y' as our marker when we created the game and defer from going first. The idea here is that whoever creates the game gets to choose their marker and whether or not they want to go first.
+We could've easily chose 'Y' as our marker when we created the game and deferred from going first. The idea here is that
+whoever creates the game gets to choose their marker and whether or not they want to go first.
 
 **NOTE**: We have the following game creation scenarios:
-1. Creating player chooses to be 'X' and chooses to go first: `
-2. Creating player chooses to be 'X' and chooses to not go first
-3. Creating player chooses to be 'Y' and chooses to go first: `
-4. Creating player chooses to be 'Y' and chooses to not go first
-
-**Example Response** - Invalid creation params, both player names provided
-If we specify both `x_player_name` and `y_player_name` together we will get back an error response.
-```
-400 Bad Request
-{ "code": 400, "message": "Please only provide one player name, either x_player_name or o_player_name." }
-```
-
-**Example Response** - Invalid creation params, both `x_goes_first` and `y_goes_first` provided
-If we specify both `x_goes_first` and `y_goes_first` together we will get back an error response.
-```
-400 Bad Request
-{ "code": 400, "message": "Only one player can go first."}
-```
+1. Creating player chooses to be 'X' and chooses 'X' to go first
+2. Creating player chooses to be 'X' and chooses 'Y' to go first
+3. Creating player chooses to be 'Y' and chooses 'Y' to go first
+4. Creating player chooses to be 'Y' and chooses 'X' to go first
 
 ## List available games to join
 
@@ -88,28 +77,32 @@ Content-Type: application/json
     {
         "game_id": 1,
         "is_public": true,
-        "x_player_name": "Dan",
-        "x_player_id": 1,
-        "y_player_name": null,
-        "y_player_id": null,
-        "current_player_id": 1,
+        "player1_name": "Dan",
+        "player1_id": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player1_mark": "X",
+        "player2_name": null,
+        "player2_id": null,
+        "player2_mark": "O"
+        "current_player_id": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
         "status": "waiting",
         "winning_player_id": null,
-        "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-        "auth_code": "SOME_RANDOM_STRING"
+        "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+        "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
     },
     {
         "game_id": 2,
         "is_public": true,
-        "x_player_name": "Ben",
-        "x_player_id": 2,
-        "y_player_name": null,
-        "y_player_id": null,
+        "player1_name": "Ben",
+        "player1_id": "b7f7bec4-084a-40f8-9095-a0dd2b0c66e7",
+		"player1_mark": "O",
+        "player2_name": null,
+        "player2_id": null,
+		"player2_mark": "X",
         "current_player_id": null,
         "status": "waiting",
         "winning_player_id": null,
-        "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-        "auth_code": "SOME_RANDOM_STRING"
+        "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+        "game_auth_code": "760bf7e8-aab7-48d2-bca9-0640a15a7ae8"
     }
 ]
 ```
@@ -124,13 +117,15 @@ POST /api/game/:id/join HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
-    "player_name": "Ben",
-    "auth_code": "SOME_RANDOM_STRING"
+    "player2_name": "Ben",
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
 }
 ```
 
 When a player successfully joins a game the game is then set to `running` status and the joining player is assigned
-whichever marker is available and either gets to go first or second depending upon what the creating player chose.
+whichever marker is available and either gets to go first or second depending upon what the creating player (player1)
+chose. Once the game is joined we generate a new game authorization code to be used in the next operation/update of the
+game state.
 
 **Example Response** - Successful game join
 ```
@@ -138,17 +133,32 @@ whichever marker is available and either gets to go first or second depending up
 {
     "game_id": 1,
     "is_public": true,
-    "x_player_name": "Dan",
-    "x_player_id": 1,
-    "y_player_name": "Ben",
-    "y_player_id": 2,
-    "current_player_id": 1,
+    "player1_name": "Dan",
+    "player1_id": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+    "player1_mark": "X",
+    "player2_name": "Ben",
+    "player2_id": "b56639d6-db15-49ee-8d4d-4d92bce70d22",
+    "player2_mark": "Y",
+    "current_player_id": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
     "status": "running",
     "winning_player_id": null,
-    "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
-    "auth_code": "SOME_RANDOM_STRING"
+    "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
 }
 ```
 
 In the above example 'Ben' is using the 'Y' marker and is going second because 'Dan' chose the 'X' marker and to go
-first when he created the game.
+first when he created the game. Also note that each player now has a player id which we will use later to validate
+moves.
+
+**Example Response** - Error joining a game that is not in the `waiting` status
+```
+400 Bad Reauest
+{ "code": 400, "message": "Cannot join an already running game."}
+```
+
+**Example Response** - Invalid game authorization code
+```
+400 Bad Reauest
+{ "code": 400, "message": "Invalid game authorization code."}
+```

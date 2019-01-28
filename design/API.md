@@ -16,9 +16,9 @@ POST /api/game HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
-	"player1_name": "Dan",
-	"player1_mark": "X",
-	"goes_first": "player1,
+    "player1_name": "Dan",
+    "player1_mark": "X",
+    "goes_first": "player1,
 }
 ```
 

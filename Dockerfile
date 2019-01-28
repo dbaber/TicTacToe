@@ -19,4 +19,11 @@ RUN set -ex && \
 	rm -rf /local/cache && \
 	rm -rf /root/.cpanm
 
+COPY bin /opt/tictactoe/bin
+COPY environments /opt/tictactoe/environments
+COPY lib /opt/tictactoe/lib
+COPY public /opt/tictactoe/public
+COPY views /opt/tictactoe/views
+COPY config.yml /opt/tictactoe/
+
 WORKDIR /opt/tictactoe

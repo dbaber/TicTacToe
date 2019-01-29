@@ -8,11 +8,11 @@ Tic Tac Toe REST API using Dancer2 and an SQLite database.
 
 ## Create a new game
 
-When creating a new game a player1 object's name is required and player1 gets to decide who will go first and whether or
-not that player wishes to use an 'X' or 'O' to make their moves. We do this by supplying the `player_name`, a
-`player_mark` of 'X' or 'O' in the payload along with a `goes_first` value of 'player1' or 'player2' at the top-level.
-The game also starts in the `waiting` status and no moves can be executed until another player joins the game with the
-proper game authorization code. Once the game is joined then the game status changes to `running`.
+When creating a new game we must provide a player1 object with a required name. Player1 also gets to decide who will go
+first and whether or not that player wishes to use an 'X' or 'O' to make their moves. We do this by supplying the
+`player_name`, a `player_mark` of 'X' or 'O' in the payload along with a `goes_first` value of 'player1' or 'player2' at
+the top-level. The game also starts in the `waiting` status and no moves can be executed until another player joins the
+game with the proper game authorization code. Once the game is joined then the game status changes to `running`.
 
 **Example Request** - Player wants to be X and go first
 _Security Note_: This is a public method.

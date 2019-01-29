@@ -65,7 +65,7 @@ Location: http://localhost:5000/api/game/1
 In the response above we have 'Dan' choosing the 'X' marker and deciding to go first. There is no 'O' player yet, 'Dan'
 is the current player or the first one to move, the game status is 'waiting' for another player to join (the 'O'
 player), there is no winning player and the game board is empty. The `game_id`, `player1.player_code` and
-`player2.player2_code' are all generated codes. There is also a generated game authorization code that is used to
+`player2.player2_code` are all generated codes. There is also a generated game authorization code that is used to
 validate the join operation.  The generated player codes are used to validate games moves in conjunction with the game
 authorization code.  This is an attempt at simple security and to prevent other people from randomly hijacking a game.
 Althought real user authentication would go a long way, it was decided to not implement that at this time.
@@ -284,11 +284,14 @@ request is placing an 'X' on the 0 spot on the board which is the upper left cor
 
 ### Example Board Indices
 
+```
 0 | 1 | 2
 ---------
 3 | 4 | 5
 ---------
 6 | 7 | 8
+```
+
 
 **Example Request**
 

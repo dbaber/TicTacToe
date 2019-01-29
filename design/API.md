@@ -15,6 +15,7 @@ the top-level. The game also starts in the `waiting` status and no moves can be 
 game with the proper game authorization code. Once the game is joined then the game status changes to `running`.
 
 **Example Request** - Player wants to be X and go first
+
 _Security Note_: This is a public method.
 ```
 POST /api/game HTTP/1.1

@@ -1,0 +1,102 @@
+# This file will automatically be used if you run `perlcritic` from the
+# directory which contains it.  To use it when running from other directories,
+# either make a symlink to this file in your home directory, or set the
+# PERLCRITIC environment variable to point to this file.
+
+# Users of vim should check out http://www.vim.org/scripts/script.php?script_id=1731
+# to enable an easy way to navigate through violations from within vim
+
+# This file defines a "baber" theme for perlcritic, and causes only policies
+# within that theme to be used.
+
+theme = baber
+
+# Default to complaining about things with severity of at least 4
+# Tests will only enforce severity 5
+severity = 1
+
+##############################################
+# Configure the policies we follow
+# Overriding their severities where necessary
+
+[BuiltinFunctions::ProhibitStringyEval]
+add_themes = baber
+severity = 4
+
+[BuiltinFunctions::ProhibitVoidGrep]
+add_themes = baber
+severity = 3
+
+[BuiltinFunctions::ProhibitVoidMap]
+add_themes = baber
+severity = 3
+
+[CodeLayout::ProhibitTrailingWhitespace]
+add_themes = baber
+severity = 1
+
+[CodeLayout::RequireTidyCode]
+add_themes = baber
+severity = 1
+
+[CodeLayout::RequireTrailingCommas]
+add_themes = baber
+severity = 1
+
+[ControlStructures::ProhibitCascadingIfElse]
+add_themes = baber
+severity = 4
+
+[ControlStructures::ProhibitDeepNests]
+add_themes = baber
+severity = 4
+
+[ControlStructures::ProhibitUnreachableCode]
+add_themes = baber
+severity = 4
+
+[Modules::RequireEndWithOne]
+add_themes = baber
+severity = 4
+
+[Modules::RequireFilenameMatchesPackage]
+add_themes = baber
+severity = 5
+
+[Modules::RequireNoMatchVarsWithUseEnglish]
+add_themes = baber
+severity = 5
+
+[Subroutines::ProhibitExplicitReturnUndef]
+add_themes = baber
+severity = 4
+
+[Subroutines::ProhibitReturnSort]
+add_themes = baber
+severity = 4
+
+[Subroutines::RequireFinalReturn]
+add_themes = baber
+severity = 4
+
+[TestingAndDebugging::RequireUseStrict]
+add_themes = baber
+severity = 1
+
+[TestingAndDebugging::RequireUseWarnings]
+add_themes = baber
+severity = 1
+
+[ValuesAndExpressions::ProhibitMismatchedOperators]
+add_themes = baber
+severity = 4
+
+[Variables::ProhibitConditionalDeclarations]
+add_themes = baber
+severity = 5
+
+[Variables::ProhibitMatchVars]
+add_themes = baber
+severity = 4
+
+# vim: ft=dosini

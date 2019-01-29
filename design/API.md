@@ -2,6 +2,10 @@
 
 Tic Tac Toe REST API using Dancer2 and an SQLite database.
 
+## ERD Diagram
+
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Tic Tac Toe ERD Diagram")
+
 ## Create a new game
 
 When creating a new game a player1 object's name is required and player1 gets to decide who will go first and whether or
@@ -11,6 +15,7 @@ The game also starts in the `waiting` status and no moves can be executed until 
 proper game authorization code. Once the game is joined then the game status changes to `running`.
 
 **Example Request** - Player wants to be X and go first
+_Security Note_: This is a public method.
 ```
 POST /api/game HTTP/1.1
 Host: localhost:5000
@@ -25,8 +30,10 @@ Content-Type: application/json
 ```
 
 **Example Response** - Successful game creation
+_Security Note_: Here player1 can get access to their player code and the game auth code.
 ```
-200 OK
+201 Created
+Location: http://localhost:5000/api/game/1
 {
     "game_id": 1,
     "is_public": true,
@@ -48,7 +55,8 @@ Content-Type: application/json
     "winning_player_id": null,
     "game_status_value": "waiting",
     "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
-    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": null
 }
 ```
 
@@ -75,6 +83,7 @@ player1.
 Here we list all `waiting` public games so that they can be joined by other players as player2.
 
 **Example Request** - List all available `waiting` public games
+_Security Note_: Here we have to make sure we do not expose any player codes.
 ```
 GET /api/game/ HTTP/1.1
 Host: localhost:5000
@@ -93,7 +102,6 @@ Content-Type: application/json
         "player1": {
             "player_id": 1,
             "player_name": "Dan",
-            "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
             "player_mark": "X"
         },
         "player2_id": null,
@@ -101,13 +109,13 @@ Content-Type: application/json
         "current_player": {
             "player_id": 1,
             "player_name": "Dan",
-            "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
             "player_mark": "X"
         },
-        "status": "waiting",
         "winning_player_id": null,
-        "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
-        "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
+        "game_status_value": "waiting",
+        "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+        "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+        "win_state_value": null
     },
     // Here we have Ben starting a game as 'O' and choosing to go second
     {
@@ -117,15 +125,15 @@ Content-Type: application/json
         "player1": {
             "player_id": 2,
             "player_name": "Ben",
-            "player_code": "b7f7bec4-084a-40f8-9095-a0dd2b0c66e7",
             "player_mark": "O"
         },
         "player2_id": null,
         "current_player_id": null,
-        "status": "waiting",
         "winning_player_id": null,
-        "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
-        "game_auth_code": "760bf7e8-aab7-48d2-bca9-0640a15a7ae8"
+        "game_status_value": "waiting",
+        "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+        "game_auth_code": "760bf7e8-aab7-48d2-bca9-0640a15a7ae8",
+        "win_state_value": null
     }
 ]
 ```
@@ -135,6 +143,7 @@ Content-Type: application/json
 This operation allows a player to join a `waiting` available/public game.
 
 **Example Request** - Join an avaliable game
+_Security Note_: This is a public method but we should ensure that we do not expose player1's code to the joining player2.
 ```
 POST /api/game/:id/join HTTP/1.1
 Host: localhost:5000
@@ -154,7 +163,8 @@ authorization code to make moves for player2.
 
 **Example Response** - Successful game join
 ```
-200 OK
+201 Created
+Location: http://localhost:5000/api/game/1
 {
     "game_id": 1,
     "is_public": true,
@@ -162,7 +172,6 @@ authorization code to make moves for player2.
     "player1": {
         "player_id": 1,
         "player_name": "Dan",
-        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
         "player_mark": "X"
     },
     "player2_id": 2,
@@ -176,13 +185,13 @@ authorization code to make moves for player2.
     "current_player": {
         "player_id": 1,
         "player_name": "Dan",
-        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
         "player_mark": "X"
     },
-    "status": "running",
     "winning_player_id": null,
-    "board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
-    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
+    "game_status_value": "running",
+    "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": null
 }
 ```
 
@@ -201,3 +210,270 @@ moves along with the game authorization code.
 400 Bad Reauest
 { "code": 400, "message": "Invalid game authorization code."}
 ```
+
+## Retrive an individual game
+
+Get an representation of an individual game.
+
+**Example Request** - Get an individual game
+_Security Note_: For this GET endpoint, the user code and the game auth code must be provided in the appropriate headers
+`X-User-Code` and `X-Game-Auth-Code` respectively when making a request.
+```
+GET /api/game/:game_id HTTP/1.1
+Host: localhost:5000
+Content-Type: application/json
+X-User-Code: 05e0b43c-1dd7-45e5-b90c-b3fce80acb21
+X-Game-Auth-Code: dbd2da0f-e6de-47a5-ac57-c198b13913cf
+```
+
+**Example Response**
+```
+200 OK
+{
+    "game_id": 1,
+    "is_public": true,
+    "player1_id": 1,
+    "player1": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "player2_id": 2,
+    "player2": {
+        "player2_id": 2,
+        "player2_name": "Ben",
+        "player2_mark": "O",
+    },
+    "current_player_id": 1,
+    "current_player": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "winning_player_id": null,
+    "game_status_value": "running",
+    "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": null
+}
+```
+
+**Example Response** - Game not found
+```
+404 Bad Reauest
+{ "code": 404, "message": "Game with :game_id not found" }
+```
+
+**Example Response** - Not authorized
+```
+401 Unauthorized
+{ "code": 401, "message": "You are not authorized to view this game"}
+```
+
+## Make a move on the game board
+
+Here we number the game board spots 0 - 8 which also correspond to the indices in the `game_board` array. The example
+request is placing an 'X' on the 0 spot on the board which is the upper left corner.
+
+### Example Board Indices
+
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
+
+**Example Request**
+_Security Note_: In order to make a move on the game board you must have a proper player code and game authorization code.
+```
+POST /api/game/:id/move/0 HTTP/1.1
+Host: localhost:5000
+Content-Type: application/json
+{
+    "player1": {
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
+}
+```
+
+**Example Response**
+```
+201 Created
+Location: http://localhost:5000/api/game/1
+{
+    "game_id": 1,
+    "is_public": true,
+    "player1_id": 1,
+    "player1": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "player2_id": 2,
+    "player2": {
+        "player2_id": 2,
+        "player2_name": "Ben",
+        "player2_mark": "O",
+    },
+    "current_player_id": 1,
+    "current_player": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "winning_player_id": null,
+    "game_status_value": "running",
+    "game_board": ["X", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": null
+}
+```
+
+**Example Response** - Not authorized
+```
+401 Unauthorized
+{ "code": 401, "message": "You are not authorized to make a move on this game board"}
+```
+
+**Example Response** - Error moving out of turn
+```
+400 Bad Reauest
+{ "code": 400, "message": "Player1 cannot move out of turn"}
+```
+
+**Example Response** - Error moving to an occupied space
+```
+400 Bad Reauest
+{ "code": 400, "message": "You cannot move to space '0' because it is already occupied"}
+```
+
+## Game Win State Conditions
+
+Here we will illustrate various 'complete' games and their possible win states.
+
+### Player1 wins
+
+```
+{
+    "game_id": 1,
+    "is_public": true,
+    "player1_id": 1,
+    "player1": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "player2_id": 2,
+    "player2": {
+        "player2_id": 2,
+        "player2_name": "Ben",
+        "player2_mark": "O",
+    },
+    "current_player_id": 1,
+    "current_player": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "winning_player_id": 1,
+    "winning_player": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "game_status_value": "complete",
+    "game_board": ["X", "O", "_", "X", "O", "X", "_", "_", "_"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": "player1"
+}
+```
+
+### Player2 wins
+
+```
+{
+    "game_id": 1,
+    "is_public": true,
+    "player1_id": 1,
+    "player1": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "player2_id": 2,
+    "player2": {
+        "player2_id": 2,
+        "player2_name": "Ben",
+        "player2_mark": "O",
+    },
+    "current_player_id": 1,
+    "current_player": {
+        "player_id": 1,
+        "player_name": "Ben",
+        "player_mark": "O"
+    },
+    "winning_player_id": 1,
+    "winning_player": {
+        "player_id": 1,
+        "player_name": "Ben",
+        "player_mark": "O"
+    },
+    "game_status_value": "complete",
+    "game_board": ["X", "X", "_", "O", "X", "X", "O", "O", "O"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": "player2"
+}
+```
+
+### Cats Game - tied
+
+```
+{
+    "game_id": 1,
+    "is_public": true,
+    "player1_id": 1,
+    "player1": {
+        "player_id": 1,
+        "player_name": "Dan",
+        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
+        "player_mark": "X"
+    },
+    "player2_id": 2,
+    "player2": {
+        "player2_id": 2,
+        "player2_name": "Ben",
+        "player2_mark": "O",
+    },
+    "current_player_id": 1,
+    "current_player": {
+        "player_id": 1,
+        "player_name": "Ben",
+        "player_mark": "O"
+    },
+    "winning_player_id": null,
+    "game_status_value": "complete",
+    "game_board": ["X", "X", "O", "O", "O", "X", "X", "O", "X"],
+    "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
+    "win_state_value": "cats"
+}
+```
+
+## Caveats/Issues
+
+There are a number of caveats/issues with my approach.
+
+1. It may be simpler just to implement real user registration/auth so enforcing permissions and deciding on what user
+   codes to display isn't so cumbersome.
+2. There are most likely concurrency issues with creating games, joining and move operations. If I used PostgreSQL then
+   I would most likely have used an advisory lock to serialize access and avoid race conditions. One could also use some
+   sort of optimistic locking as well possibly.

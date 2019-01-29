@@ -31,6 +31,7 @@ Content-Type: application/json
 ```
 
 **Example Response** - Successful game creation
+
 _Security Note_: Here player1 can get access to their player code and the game auth code.
 ```
 201 Created
@@ -84,6 +85,7 @@ player1.
 Here we list all `waiting` public games so that they can be joined by other players as player2.
 
 **Example Request** - List all available `waiting` public games
+
 _Security Note_: Here we have to make sure we do not expose any player codes.
 ```
 GET /api/game/ HTTP/1.1
@@ -144,6 +146,7 @@ Content-Type: application/json
 This operation allows a player to join a `waiting` available/public game.
 
 **Example Request** - Join an avaliable game
+
 _Security Note_: This is a public method but we should ensure that we do not expose player1's code to the joining player2.
 ```
 POST /api/game/:id/join HTTP/1.1
@@ -217,6 +220,7 @@ moves along with the game authorization code.
 Get an representation of an individual game.
 
 **Example Request** - Get an individual game
+
 _Security Note_: For this GET endpoint, the user code and the game auth code must be provided in the appropriate headers
 `X-User-Code` and `X-Game-Auth-Code` respectively when making a request.
 ```
@@ -287,6 +291,7 @@ request is placing an 'X' on the 0 spot on the board which is the upper left cor
 6 | 7 | 8
 
 **Example Request**
+
 _Security Note_: In order to make a move on the game board you must have a proper player code and game authorization code.
 ```
 POST /api/game/:id/move/0 HTTP/1.1

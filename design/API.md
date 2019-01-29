@@ -4,7 +4,7 @@ Tic Tac Toe REST API using Dancer2 and an SQLite database.
 
 ## ERD Diagram
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Tic Tac Toe ERD Diagram")
+![alt text](https://github.com/dbaber/TicTacToe/blob/master/design/Tic_Tac_Toe_ERD.png "Tic Tac Toe ERD Diagram")
 
 ## Create a new game
 

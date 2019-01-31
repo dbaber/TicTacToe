@@ -1914,9 +1914,8 @@ DISTRIBUTIONS
     requirements:
       Capture::Tiny 0.24
       Data::Dumper 2.126
-      ExtUtils::MakeMaker 0
       Test::More 0.88
-      Text::Diff 1.43
+      Text::Diff 0.35
   Test-Exception-0.43
     pathname: E/EX/EXODIST/Test-Exception-0.43.tar.gz
     provides:

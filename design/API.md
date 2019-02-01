@@ -350,6 +350,12 @@ Location: http://localhost:5000/api/game/1
 { "code": 401, "message": "You are not authorized to make a move on this game board"}
 ```
 
+**Example Response** - Error making a move on a game that isn't running
+```
+400 Bad Reauest
+{ "code": 400, "message": "Cannot make a move on a game that is not running"}
+```
+
 **Example Response** - Error moving out of turn
 ```
 400 Bad Reauest

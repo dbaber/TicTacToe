@@ -57,3 +57,4 @@ plugins:
       dsn: dbi:SQLite:dbname=db/tictactoe.db
 
 logger: 'console'
+log: 'debug'

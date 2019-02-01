@@ -16,10 +16,13 @@ post '/game' => sub {
 	my $player1    = body_parameters->get('player1');
 	my $goes_first = body_parameters->get('goes_first');
 
+	debug "goes_first = ",     $goes_first;
+	debug "player1 symbol = ", $player1->{player_mark};
+
 	my $game = Game::TicTacToe->new();
 	$game->add_player1( $player1->{player_name}, $player1->{player_mark}, $goes_first );
 
-	return {};
+	return $game->db_data();
 };
 
 1;

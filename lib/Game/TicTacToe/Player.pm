@@ -60,4 +60,14 @@ sub get_message {
 	}
 }
 
+sub db_data {
+	my ($self) = @_;
+
+	return {
+		player_name => $self->name,
+		player_code => $self->code,
+		player_mark => $self->symbol,
+	};
+}
+
 1;

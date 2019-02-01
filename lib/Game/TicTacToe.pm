@@ -94,6 +94,7 @@ sub add_player1 {
 
 	# If there is no current player then we use $goes_first to set player1 if he chose to go first
 	# otherwise player2 will get to go first when they join the game
+
 	if ( not $self->has_current && defined $goes_first && $self->players->[0]->symbol eq $goes_first ) {
 		$self->current( $self->players->[0] );
 	}
@@ -189,6 +190,38 @@ sub is_valie_game_board_size {
 	my ( $self, $size ) = @_;
 
 	return ( defined $size && ( $size >= 3 ) );
+}
+
+sub db_data {
+	my ($self) = @_;
+
+	my $player1 = $self->players->[0];
+
+	my $player2;
+	if ( scalar( @{ $self->players } ) == 2 ) {
+		$player2 = $self->players->[1]->db_data();
+	}
+
+	my ( $current_player, $winning_player );
+	if ( $self->has_current ) {
+		$current_player = $self->current->db_data();
+	}
+	if ( $self->has_winner ) {
+		$winning_player = $self->winner->db_data();
+	}
+
+	#TODO: Need some logic for win_state_value, not gonna set it for now
+
+	return {
+		"is_public"         => $self->is_public,
+		"player1"           => $player1->db_data(),
+		"player2"           => $player2,
+		"current_player"    => $current_player,
+		"winning_player"    => $winning_player,
+		"game_status_value" => $self->status,
+		"game_board"        => ( '[' . join( ",", @{ $self->board->cell } ) . ']' ),
+		"game_auth_code"    => $self->auth_code,
+	};
 }
 
 ### Private Methods ###

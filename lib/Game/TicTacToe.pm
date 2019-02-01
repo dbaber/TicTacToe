@@ -25,9 +25,6 @@ has current => (
 	is        => 'rw',
 	isa       => Player,
 	predicate => 1,
-
-	#isa     => PlayerType,
-	#default => sub { return 'H' },
 );
 
 has players => (
@@ -94,8 +91,7 @@ sub add_player1 {
 
 	# If there is no current player then we use $goes_first to set player1 if he chose to go first
 	# otherwise player2 will get to go first when they join the game
-
-	if ( not $self->has_current && defined $goes_first && $self->players->[0]->symbol eq $goes_first ) {
+	if ( !$self->has_current && defined $goes_first && $self->players->[0]->symbol eq $goes_first ) {
 		$self->current( $self->players->[0] );
 	}
 

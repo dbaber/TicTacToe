@@ -112,4 +112,24 @@ post '/game/:id/join' => sub {
 	return $game_r->rest_data();
 };
 
+get '/game/:id' => sub {
+	my $x_user_code      = request_header 'X-User-Code';
+	my $x_game_auth_code = request_header 'X-Game-Auth-Code';
+
+	# TODO: Params validation?
+	my $id = route_parameters->get('id');
+
+	my $game_r = schema->resultset('Game')->find($id);
+	if ( !defined $game_r ) {
+		status 404;
+		return {};
+	}
+
+	send_error( "You are not authorized to access this game.", 401 )
+	  unless ( $game_r->game_auth_code eq $x_game_auth_code
+		&& ( $game_r->player1->player_code eq $x_user_code || $game_r->player2->player_code eq $x_user_code ) );
+
+	return $game_r->rest_data();
+};
+
 1;

@@ -55,3 +55,5 @@ plugins:
   DBIC:
     default:
       dsn: dbi:SQLite:dbname=db/tictactoe.db
+
+logger: 'console'

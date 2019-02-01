@@ -87,10 +87,10 @@ sub add_player1 {
 	}
 
 	die("ERROR: Player1 already exists for this game. Please join with Player2.")
-	  unless ( $self->has_players && scalar( @{ $self->players } ) == 0 );
+	  if ( $self->has_players && scalar( @{ $self->players } ) == 1 );
 
 	# Add Player1
-	push @{ $self->players }, Games::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
+	push @{ $self->{players} }, Game::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
 
 	# If there is no current player then we use $goes_first to set player1 if he chose to go first
 	# otherwise player2 will get to go first when they join the game
@@ -116,7 +116,7 @@ sub join_player2 {
 
 	# Add Player2
 	my $symbol = $self->players->[0]->other_symbol;
-	push @{ $self->players }, Games::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
+	push @{ $self->{players} }, Game::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
 
 	if ( not $self->has_current ) {
 		$self->current( $self->players->[1] );
@@ -141,7 +141,7 @@ sub play {
 		--$move;
 	}
 	else {
-		$move = Games::TicTacToe::Move::now( $player, $board );
+		$move = Game::TicTacToe::Move::now( $player, $board );
 	}
 
 	$board->setCell( $move, $player->symbol );
@@ -166,7 +166,7 @@ sub is_game_over {
 
 	my $board = $self->board;
 	for my $player ( @{ $self->players } ) {
-		if ( Games::TicTacToe::Move::foundWinner( $player, $board ) ) {
+		if ( Game::TicTacToe::Move::foundWinner( $player, $board ) ) {
 			$self->winner($player);
 			return 1;
 		}

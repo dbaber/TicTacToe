@@ -121,8 +121,7 @@ get '/game/:id' => sub {
 
 	my $game_r = schema->resultset('Game')->find($id);
 	if ( !defined $game_r ) {
-		status 404;
-		return {};
+		send_error( "Game not found for id '$id'.", 404 );
 	}
 
 	send_error( "You are not authorized to access this game.", 401 )

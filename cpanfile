@@ -3,6 +3,7 @@ requires 'Dancer2::Plugin::DBIC', '0.0100';
 requires 'Moo', '2.003004';
 requires 'namespace::clean', '0.27';
 requires 'Type::Tiny', '1.004004';
+requires 'Types::UUID', '0.004',
 
 recommends 'YAML'             => '0';
 recommends 'URL::Encode::XS'  => '0';

@@ -3,33 +3,62 @@ package Game::TicTacToe;
 use Game::TicTacToe::Move;
 use Game::TicTacToe::Board;
 use Game::TicTacToe::Player;
-use Game::TicTacToe::Types qw(Board PlayerType Players);
+use Game::TicTacToe::Types qw(Board PlayerType Player Players GameStatus);
 
 use Moo;
 use namespace::clean;
+use Types::Standard qw(Bool);
+use Types::UUID;
+
+has is_public => (
+	is      => 'ro',
+	isa     => Bool,
+	default => sub { return 1 },
+);
 
 has board => (
 	is  => 'rw',
-	isa => Board
+	isa => Board,
 );
+
 has current => (
-	is      => 'rw',
-	isa     => PlayerType,
-	default => sub { return 'H' },
+	is        => 'rw',
+	isa       => Player,
+	predicate => 1,
+
+	#isa     => PlayerType,
+	#default => sub { return 'H' },
 );
+
 has players => (
 	is        => 'rw',
 	isa       => Players,
 	predicate => 1,
 );
+
 has size => (
 	is      => 'ro',
 	default => sub { return 3 }
 );
+
 has winner => (
 	is        => 'rw',
+	isa       => Player,
 	predicate => 1,
 	clearer   => 1,
+);
+
+has status => (
+	is      => 'rw',
+	isa     => GameStatus,
+	default => sub { return 'waiting' },
+);
+
+has auth_code => (
+	is      => 'ro',
+	isa     => Uuid,
+	lazy    => 1,
+	builder => Uuid->generator,
 );
 
 sub BUILD {
@@ -47,23 +76,53 @@ sub set_game_board {
 	return;
 }
 
-#XXX: Gonna rework this a bit to handle the "join" functionality I have in mind
-sub set_players {
-	my ( $self, $symbol ) = @_;
+sub add_player1 {
+	my ( $self, $name, $symbol, $goes_first ) = @_;
+
+	die("ERROR: Can only add player1 to a game in 'waiting' status") unless $self->status eq 'waiting';
 
 	if ( ( $self->has_players ) && ( scalar( @{ $self->players } ) == 2 ) ) {
 		warn("WARNING: We already have 2 players to play the TicTacToe game.");
 		return;
 	}
 
-	die "ERROR: Missing symbol for the player.\n" unless defined $symbol;
+	die("ERROR: Player1 already exists for this game. Please join with Player2.")
+	  unless ( $self->has_players && scalar( @{ $self->players } ) == 0 );
 
-	# Player 1
-	push @{ $self->{players} }, Games::TicTacToe::Player->new( type => 'H', symbol => uc($symbol) );
+	# Add Player1
+	push @{ $self->players }, Games::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
 
-	# Player 2
-	$symbol = ( uc($symbol) eq 'X' ) ? ('O') : ('X');
-	push @{ $self->{players} }, Games::TicTacToe::Player->new( type => 'H', symbol => $symbol );
+	# If there is no current player then we use $goes_first to set player1 if he chose to go first
+	# otherwise player2 will get to go first when they join the game
+	if ( not $self->has_current && defined $goes_first && $self->players->[0]->symbol eq $goes_first ) {
+		$self->current( $self->players->[0] );
+	}
+
+	return;
+}
+
+sub join_player2 {
+	my ( $self, $name ) = @_;
+
+	die("ERROR: Can only join player2 to a game in 'waiting' status") unless $self->status eq 'waiting';
+
+	if ( ( $self->has_players ) && ( scalar( @{ $self->players } ) == 2 ) ) {
+		warn("WARNING: We already have 2 players to play the TicTacToe game.");
+		return;
+	}
+
+	die("ERROR: Player2 already exists for this game.")
+	  unless ( $self->has_players && scalar( @{ $self->players } ) == 1 );
+
+	# Add Player2
+	my $symbol = $self->players->[0]->other_symbol;
+	push @{ $self->players }, Games::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
+
+	if ( not $self->has_current ) {
+		$self->current( $self->players->[1] );
+	}
+
+	$self->status('running');
 
 	return;
 }
@@ -71,7 +130,7 @@ sub set_players {
 sub play {
 	my ( $self, $move ) = @_;
 
-	die("ERROR: Please add player before you start the game.\n")
+	die("ERROR: Please add players before you start the game.\n")
 	  unless ( ( $self->has_players ) && ( scalar( @{ $self->players } ) == 2 ) );
 
 	my $player = $self->_get_current_player;

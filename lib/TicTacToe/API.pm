@@ -12,7 +12,7 @@ set serializer => 'JSON';
 
 post '/game' => sub {
 
-	# TODO: Params validation?
+	# TODO: Params validation
 	my $player1    = body_parameters->get('player1');
 	my $goes_first = body_parameters->get('goes_first');
 
@@ -63,7 +63,7 @@ sub _convert_board {
 
 post '/game/:id/join' => sub {
 
-	# TODO: Params validation?
+	# TODO: Params validation
 	my $id             = route_parameters->get('id');
 	my $player2        = body_parameters->get('player2');
 	my $game_auth_code = body_parameters->get('game_auth_code');
@@ -116,7 +116,7 @@ get '/game/:id' => sub {
 	my $x_user_code      = request_header 'X-User-Code';
 	my $x_game_auth_code = request_header 'X-Game-Auth-Code';
 
-	# TODO: Params validation?
+	# TODO: Params validation
 	my $id = route_parameters->get('id');
 
 	my $game_r = schema->resultset('Game')->find($id);
@@ -133,7 +133,7 @@ get '/game/:id' => sub {
 
 post '/game/:id/move/:index' => sub {
 
-	# TODO: Params validation?
+	# TODO: Params validation
 	my $id             = route_parameters->get('id');
 	my $index          = route_parameters->get('index');
 	my $player_code    = body_parameters->get('player_code');

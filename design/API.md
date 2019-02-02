@@ -86,7 +86,7 @@ Here we list all `waiting` public games so that they can be joined by other play
 
 **Example Request** - List all available `waiting` public games
 
-_Security Note_: Here we have to make sure we do not expose any player codes.
+_Security Note_: Here we have to make sure we do not expose any player codes other than the current player.
 ```
 GET /api/game/ HTTP/1.1
 Host: localhost:5000
@@ -116,7 +116,7 @@ Content-Type: application/json
         },
         "winning_player_id": null,
         "game_status_value": "waiting",
-        "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+        "game_board": "[1,2,3,4,5,6,7,8,9]",
         "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
         "win_state_value": null
     },
@@ -134,7 +134,7 @@ Content-Type: application/json
         "current_player_id": null,
         "winning_player_id": null,
         "game_status_value": "waiting",
-        "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+        "game_board": "[1,2,3,4,5,6,7,8,9]",
         "game_auth_code": "760bf7e8-aab7-48d2-bca9-0640a15a7ae8",
         "win_state_value": null
     }

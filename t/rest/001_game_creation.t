@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 42;
+use Test::More tests => 40;
 use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
@@ -13,14 +13,6 @@ TicTacToe::Test::prepare_db();
 
 my $app  = TicTacToe::Test::get_psgi_app();
 my $test = Plack::Test->create($app);
-
-check_avavailable_games: {
-	my $request  = GET '/api/game';
-	my $response = $test->request($request);
-	is( $response->code, 200, "Get availble games is working" );
-	my $decoded = from_json( $response->content );
-	is( scalar( @{$decoded} ), 0, "No available games to join" );
-}
 
 # Create a game as 'X' and choose 'X' to go first
 create_game_as_x_choose_x_to_go_first: {

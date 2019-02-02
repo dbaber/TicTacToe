@@ -41,6 +41,7 @@ get '/game' => sub {
 				  winning_player
 				  /,
 			],
+			order_by => 'game_id',
 		}
 	);
 

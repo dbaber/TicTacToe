@@ -215,7 +215,7 @@ moves along with the game authorization code.
 { "code": 400, "message": "Can only join a waiting available game"}
 ```
 
-## Retrive an individual game
+## Get an individual game
 
 Get an representation of an individual game.
 
@@ -259,7 +259,7 @@ X-Game-Auth-Code: dbd2da0f-e6de-47a5-ac57-c198b13913cf
     },
     "winning_player_id": null,
     "game_status_value": "running",
-    "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_board": "[1,2,3,4,5,6,7,8,9]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": null
 }
@@ -279,32 +279,29 @@ X-Game-Auth-Code: dbd2da0f-e6de-47a5-ac57-c198b13913cf
 
 ## Make a move on the game board
 
-Here we number the game board spots 0 - 8 which also correspond to the indices in the `game_board` array. The example
-request is placing an 'X' on the 0 spot on the board which is the upper left corner.
+Here we number the game board spots 1 - 9. The example request is placing an 'X' on the 1 spot on the board which is the
+upper left corner.
 
 ### Example Board Indices
 
 ```
-0 | 1 | 2
+1 | 2 | 3
 ---------
-3 | 4 | 5
+4 | 5 | 6
 ---------
-6 | 7 | 8
+7 | 8 | 9
 ```
-
 
 **Example Request**
 
-_Security Note_: In order to make a move on the game board you must have a proper player code and game authorization code.
+_Security Note_: In order to make a move on the game board you must have a proper player code and game authorization
+code.
 ```
 POST /api/game/:id/move/0 HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
-    "player1": {
-        "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
-        "player_mark": "X"
-    },
+    "player_code": "05e0b43c-1dd7-45e5-b90c-b3fce80acb21",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf"
 }
 ```
@@ -338,7 +335,7 @@ Location: http://localhost:5000/api/game/1
     },
     "winning_player_id": null,
     "game_status_value": "running",
-    "game_board": ["X", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_board": "[X,2,3,4,5,6,7,8,9]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": null
 }
@@ -370,7 +367,8 @@ Location: http://localhost:5000/api/game/1
 
 ## Game Win State Conditions
 
-Here we will illustrate various 'complete' games and their possible win states.
+Here we will illustrate various 'complete' games and their possible win states. These examples are a bit contrived and
+we checked all 8 win states in the ReST tests.
 
 ### Player1 wins
 
@@ -406,7 +404,7 @@ Here we will illustrate various 'complete' games and their possible win states.
         "player_mark": "X"
     },
     "game_status_value": "complete",
-    "game_board": ["X", "O", "_", "X", "O", "X", "_", "_", "_"],
+    "game_board": "[X,O,3,X,O,6,X,8,9]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": "player1"
 }
@@ -444,7 +442,7 @@ Here we will illustrate various 'complete' games and their possible win states.
         "player_mark": "O"
     },
     "game_status_value": "complete",
-    "game_board": ["X", "X", "_", "O", "X", "X", "O", "O", "O"],
+    "game_board": "[ X,X,3,O,X,X,O,O,O]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": "player2"
 }
@@ -477,7 +475,7 @@ Here we will illustrate various 'complete' games and their possible win states.
     },
     "winning_player_id": null,
     "game_status_value": "complete",
-    "game_board": ["X", "X", "O", "O", "O", "X", "X", "O", "X"],
+    "game_board": "[X,X,O,O,O,X,X,O,X]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": "cats"
 }
@@ -492,3 +490,8 @@ There are a number of caveats/issues with my approach.
 2. There are most likely concurrency issues with creating games, joining and move operations. If I used PostgreSQL then
    I would most likely have used an advisory lock to serialize access and avoid race conditions. One could also use some
    sort of optimistic locking as well possibly.
+3. I did not implement any sort of REST data/params validation to save some time but I most likely would use
+   Params::Validate or Data::Formvalidator. I also didn't validate the data before save()'ing it in the DB tables.
+4. I used SQLite as the backend database but that was just a chosen for ease of administration.
+5. I did not write any unit tests for the Game::TicTacToe namespace modules which were based on Games::TicTacToe on
+   CPAN.

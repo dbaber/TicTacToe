@@ -320,7 +320,9 @@ sub _find_and_save_player {
 
 	if ( defined $data ) {
 		my $schema = $self->result_source->schema;
-		my $player = $self->$rel // $schema->resultset('Player')->find( { player_code => $data->{player_code} } );
+
+		#my $player = $self->$rel // $schema->resultset('Player')->find( { player_code => $data->{player_code} } );
+		my $player = $schema->resultset('Player')->find( { player_code => $data->{player_code} } );
 
 		if ( defined $player ) {
 			return $player->save($data);

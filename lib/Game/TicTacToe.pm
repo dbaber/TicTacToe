@@ -17,8 +17,9 @@ has is_public => (
 );
 
 has board => (
-	is  => 'rw',
-	isa => Board,
+	is        => 'rw',
+	isa       => Board,
+	predicate => 1,
 );
 
 has current => (
@@ -61,7 +62,9 @@ has auth_code => (
 sub BUILD {
 	my ($self) = @_;
 
-	$self->set_game_board( $self->size );
+	if ( !$self->has_board ) {
+		$self->set_game_board( $self->size );
+	}
 	return;
 }
 
@@ -115,34 +118,11 @@ sub join_player2 {
 	my $symbol = $self->players->[0]->other_symbol;
 	push @{ $self->{players} }, Game::TicTacToe::Player->new( name => $name, symbol => uc($symbol) );
 
-	if ( not $self->has_current ) {
+	if ( !$self->has_current ) {
 		$self->current( $self->players->[1] );
 	}
 
 	$self->status('running');
-
-	return;
-}
-
-sub old_play {
-	my ( $self, $move ) = @_;
-
-	die("ERROR: Please add players before you start the game.\n")
-	  unless ( ( $self->has_players ) && ( scalar( @{ $self->players } ) == 2 ) );
-
-	my $player = $self->_get_current_player;
-	my $board  = $self->board;
-
-	#XXX: This has to change because I'm proabbly not gonna implement a computer player
-	if ( defined $move && ( $self->_get_current_player->type eq 'H' ) ) {
-		--$move;
-	}
-	else {
-		$move = Game::TicTacToe::Move::now( $player, $board );
-	}
-
-	$board->setCell( $move, $player->symbol );
-	$self->_resetCurrentPlayer unless ( $self->isGameOver );
 
 	return;
 }
@@ -180,9 +160,12 @@ sub is_game_over {
 	for my $player ( @{ $self->players } ) {
 		if ( Game::TicTacToe::Move::found_winner( $player, $board ) ) {
 			$self->winner($player);
+			$self->status('complete');
 			return 1;
 		}
 	}
+
+	$self->status('complete') if $board->is_full;
 
 	return $board->is_full;
 }
@@ -197,7 +180,7 @@ sub is_valid_move {
 		  && ( $self->board->is_cell_empty( $move - 1 ) ) );
 }
 
-sub is_valie_game_board_size {
+sub is_valid_game_board_size {
 	my ( $self, $size ) = @_;
 
 	return ( defined $size && ( $size >= 3 ) );

@@ -30,7 +30,7 @@ get '/game' => sub {
 	my $game_rs = schema->resultset('Game')->search(
 		{
 			game_status_value => 'waiting',
-
+			is_public         => 1,
 		},
 		{
 			prefetch => [
@@ -49,7 +49,7 @@ get '/game' => sub {
 	return \@data;
 };
 
-#XXX: Coul probably use a type coercion but punting on that
+#XXX: Could probably use a type coercion but punting on that
 sub _convert_board {
 	my ($board) = @_;
 
@@ -217,20 +217,19 @@ post '/game/:id/move/:index' => sub {
 		auth_code => $game_r->game_auth_code,
 	);
 
-	send_error( "Cannot move to space '$index' because it is already occupied.", 400 )
+	#XXX: Break this apart some? We can probably so a separate invalid check based on the board size?
+	send_error( "Cannot move to space '$index' because it is already occupied or invalid.", 400 )
 	  unless $game->is_valid_move($index);
 
 	send_error( "Cannot make a move on a board for a game that is over.", 400 ) if $game->is_game_over;
 
 	$game->play($index);
 
-	#$game_r->save( $game->db_data() );
+	$game_r->save( $game->db_data() );
 
 	status 201;
 	header 'Location' => uri_for( '/game/' . $game_r->game_id );
-
-	#return $game_r->rest_data();
-	return $game->db_data();
+	return $game_r->rest_data();
 };
 
 1;

@@ -124,7 +124,7 @@ sub join_player2 {
 	return;
 }
 
-sub play {
+sub old_play {
 	my ( $self, $move ) = @_;
 
 	die("ERROR: Please add players before you start the game.\n")
@@ -147,6 +147,21 @@ sub play {
 	return;
 }
 
+sub play {
+	my ( $self, $move ) = @_;
+
+	die("ERROR: Game must be in the running status to play.")
+	  unless $self->status eq 'running';
+
+	my $player = $self->current;
+	my $board  = $self->board;
+
+	$board->set_cell( $move - 1, $player->symbol );
+	$self->_reset_current_player unless ( $self->is_game_over );
+
+	return;
+}
+
 sub is_last_move {
 	my ($self) = @_;
 
@@ -163,13 +178,13 @@ sub is_game_over {
 
 	my $board = $self->board;
 	for my $player ( @{ $self->players } ) {
-		if ( Game::TicTacToe::Move::foundWinner( $player, $board ) ) {
+		if ( Game::TicTacToe::Move::found_winner( $player, $board ) ) {
 			$self->winner($player);
 			return 1;
 		}
 	}
 
-	return $board->isFull;
+	return $board->is_full;
 }
 
 sub is_valid_move {
@@ -178,8 +193,8 @@ sub is_valid_move {
 	return ( defined($move)
 		  && ( $move =~ /^\d+$/ )
 		  && ( $move >= 1 )
-		  && ( $move <= $self->board->getSize )
-		  && ( $self->board->isCellEmpty( $move - 1 ) ) );
+		  && ( $move <= $self->board->get_size )
+		  && ( $self->board->is_cell_empty( $move - 1 ) ) );
 }
 
 sub is_valie_game_board_size {
@@ -191,7 +206,7 @@ sub is_valie_game_board_size {
 sub db_data {
 	my ($self) = @_;
 
-	my $player1 = $self->players->[0];
+	my $player1 = $self->players->[0]->db_data();
 
 	my $player2;
 	if ( scalar( @{ $self->players } ) == 2 ) {
@@ -210,7 +225,7 @@ sub db_data {
 
 	return {
 		"is_public"         => $self->is_public,
-		"player1"           => $player1->db_data(),
+		"player1"           => $player1,
 		"player2"           => $player2,
 		"current_player"    => $current_player,
 		"winning_player"    => $winning_player,
@@ -222,12 +237,12 @@ sub db_data {
 
 ### Private Methods ###
 
-sub _get_current_player {
+sub _reset_current_player {
 	my ($self) = @_;
 
-	( $self->{players}->[0]->type eq $self->current )
-	  ? ( return $self->{players}->[0] )
-	  : ( return $self->{players}->[1] );
+	( $self->{players}->[0]->code eq $self->current->code )
+	  ? ( $self->current( $self->{players}->[1] ) )
+	  : ( $self->current( $self->{players}->[0] ) );
 
 	return;
 }

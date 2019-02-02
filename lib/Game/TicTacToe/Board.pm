@@ -87,7 +87,7 @@ sub cell_contains {
 	return ( $self->get_cell($index) eq $symbol );
 }
 
-#XXX: Give this a better name?
+#XXX: Give this a better name? Use to find win for player
 sub belongs_to_player {
 	my ( $self, $cells, $player ) = @_;
 

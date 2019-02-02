@@ -9,10 +9,10 @@ sub found_winner {
 	die("ERROR: Player not defined.\n") unless defined $player;
 	die("ERROR: Board not defined.\n")  unless defined $board;
 
-	my $size          = sqrt( $board->getSize );
-	my $winning_moves = ___winning_moves($size);
+	my $size          = sqrt( $board->get_size );
+	my $winning_moves = __winning_moves($size);
 	for my $move (@$winning_moves) {
-		return 1 if $board->belongsToPlayer( $move, $player );
+		return 1 if $board->belongs_to_player( $move, $player );
 	}
 
 	return 0;

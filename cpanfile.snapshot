@@ -750,6 +750,15 @@ DISTRIBUTIONS
     requirements:
       Devel::StackTrace 0
       ExtUtils::MakeMaker 0
+  Dir-Self-0.11
+    pathname: M/MA/MAUKE/Dir-Self-0.11.tar.gz
+    provides:
+      Dir::Self 0.11
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 6.48
+      File::Spec 0
+      strict 0
   Dist-CheckConflicts-0.11
     pathname: D/DO/DOY/Dist-CheckConflicts-0.11.tar.gz
     provides:
@@ -873,6 +882,20 @@ DISTRIBUTIONS
       File::Spec 0
       IO::Dir 0
       perl 5.006
+      strict 0
+      warnings 0
+  File-Slurp-9999.25
+    pathname: C/CA/CAPOEIRAB/File-Slurp-9999.25.tar.gz
+    provides:
+      File::Slurp 9999.25
+    requirements:
+      B 0
+      Carp 0
+      Errno 0
+      Exporter 5.57
+      ExtUtils::MakeMaker 0
+      Fcntl 0
+      POSIX 0
       strict 0
       warnings 0
   Filesys-Notify-Simple-0.13

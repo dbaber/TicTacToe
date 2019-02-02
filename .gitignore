@@ -3,3 +3,4 @@
 *.swo
 /local
 db/tictactoe.db
+db/tictactoe_testing.db

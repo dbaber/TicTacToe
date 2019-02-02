@@ -9,4 +9,6 @@ services:
       - $PWD:/opt/tictactoe
     ports:
       - '5000:5000'
+    environment:
+      - DANCER_ENVIRONMENT=development
     command: carton exec plackup -r -R lib bin/app.psgi

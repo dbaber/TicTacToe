@@ -56,6 +56,3 @@ plugins:
     default:
       dsn: dbi:SQLite:dbname=db/tictactoe.db
       schema_class: TicTacToe::Schema
-
-logger: 'console'
-log: 'debug'

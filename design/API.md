@@ -193,7 +193,7 @@ Location: http://localhost:5000/api/game/1
     },
     "winning_player_id": null,
     "game_status_value": "running",
-    "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_board": "[1,2,3,4,5,6,7,8,9]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": null
 }
@@ -203,16 +203,16 @@ In the above example 'Ben' is using the 'O' marker and is going second because '
 first when he created the game. Also note that each player now has a player code which we will use later to validate
 moves along with the game authorization code.
 
-**Example Response** - Error joining a game that is not in the `waiting` status
-```
-400 Bad Reauest
-{ "code": 400, "message": "Cannot join an already running game."}
-```
-
 **Example Response** - Invalid game authorization code
 ```
 400 Bad Reauest
 { "code": 400, "message": "Invalid game authorization code."}
+```
+
+**Example Response** - Error joining a game that is not in the `waiting` status
+```
+400 Bad Reauest
+{ "code": 400, "message": "Can only join a waiting available game"}
 ```
 
 ## Retrive an individual game

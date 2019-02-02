@@ -10,9 +10,9 @@ Tic Tac Toe REST API using Dancer2 and an SQLite database.
 
 When creating a new game we must provide a player1 object with a required name. Player1 also gets to decide who will go
 first and whether or not that player wishes to use an 'X' or 'O' to make their moves. We do this by supplying the
-`player_name`, a `player_mark` of 'X' or 'O' in the payload along with a `goes_first` value of 'player1' or 'player2' at
+`player_name`, a `player_mark` of 'X' or 'O' in the payload along with a `goes_first` value of 'X' or 'O' at
 the top-level. The game also starts in the `waiting` status and no moves can be executed until another player joins the
-game with the proper game authorization code. Once the game is joined then the game status changes to `running`.
+game with the proper game authorization code. Once the game is joined then the game status changes to `running` status.
 
 **Example Request** - Player wants to be X and go first
 
@@ -25,8 +25,8 @@ Content-Type: application/json
     "player1": {
         "player_name": "Dan",
         "player_mark": "X"
-    }
-    "goes_first": "player1,
+    },
+    "goes_first": "X"
 }
 ```
 
@@ -56,7 +56,7 @@ Location: http://localhost:5000/api/game/1
     },
     "winning_player_id": null,
     "game_status_value": "waiting",
-    "game_board": ["_", "_", "_", "_", "_", "_", "_", "_", "_"],
+    "game_board": "[1,2,3,4,5,6,7,8,9]",
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": null
 }
@@ -64,7 +64,7 @@ Location: http://localhost:5000/api/game/1
 
 In the response above we have 'Dan' choosing the 'X' marker and deciding to go first. There is no 'O' player yet, 'Dan'
 is the current player or the first one to move, the game status is 'waiting' for another player to join (the 'O'
-player), there is no winning player and the game board is empty. The `game_id`, `player1.player_code` and
+player), there is no winning player and the game board is empty. The `game_auth_code`, `player1.player_code` and
 `player2.player2_code` are all generated codes. There is also a generated game authorization code that is used to
 validate the join operation.  The generated player codes are used to validate games moves in conjunction with the game
 authorization code.  This is an attempt at simple security and to prevent other people from randomly hijacking a game.
@@ -75,10 +75,10 @@ that whoever creates the game gets to choose their marker and whether or not the
 player1.
 
 **NOTE**: We have the following game creation scenarios:
-1. Player1 chooses to be 'X' and chooses 'player1' to go first
-2. Player1 chooses to be 'X' and chooses 'player2' to go first
-3. Player1 chooses to be 'O' and chooses 'player1' to go first
-4. Player1 chooses to be 'O' and chooses 'player2' to go first
+1. Player1 chooses to be 'X' and chooses 'X' to go first
+2. Player1 chooses to be 'X' and chooses 'O' to go first
+3. Player1 chooses to be 'O' and chooses 'O' to go first
+4. Player1 chooses to be 'O' and chooses 'X' to go first
 
 ## List available games to join
 

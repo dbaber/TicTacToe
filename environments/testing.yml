@@ -27,3 +27,5 @@ plugins:
     default:
       dsn: dbi:SQLite:dbname=db/tictactoe_testing.db
       schema_class: TicTacToe::Schema
+      options:
+        sqlite_allow_multiple_statements: 1

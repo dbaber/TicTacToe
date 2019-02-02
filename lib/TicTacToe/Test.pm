@@ -2,16 +2,19 @@ package TicTacToe::Test;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TicTacToe::API';
-use Dancer2::Plugin::DBIC;
-use Dir::Self;
-use File::Slurp qw(slurp);
-
-use TicTacToe::API;
 
 BEGIN {
 	$ENV{DANCER_ENVIRONMENT} = "testing";
 }
+
+use Dancer2 appname => 'TicTacToe::API';
+use Dancer2::Plugin::DBIC;
+use Dir::Self;
+use File::Slurp qw(slurp);
+use Plack::Builder;
+
+use TicTacToe;
+use TicTacToe::API;
 
 sub prepare_db {
 	my $dbh = schema->storage->dbh;
@@ -22,21 +25,26 @@ sub prepare_db {
 	$dbh->do("DROP TABLE IF EXISTS lookup_game_status");
 	$dbh->do("DROP TABLE IF EXISTS lookup_win_state");
 
-	my $test_db = __DIR__ . '../../db/tictactoe_testing.db';
+	my $sql_file = __DIR__ . '/../../db/tictactoe.sql';
+	my $sql      = slurp($sql_file);
 
-	#	#XXX: I don't think I need this, shouldn't schema above create the DB?
-	#	if ( !-e $test_db ) {
-	#		die("Please use sqlite3 to create the testing database: sqlite3 db/tictactoe_testing.db < db/tictactoe.sql!");
-	#	}
-	#
-	my $sql = slurp($test_db);
+	#XXX: This only works if you set the option 'sqlite_allow_multiple_statements' in your test DB config
 	$dbh->do($sql);
 
 	return;
 }
 
 sub get_psgi_app {
-	return TicTacToe::API->to_app();
+	my $app = builder {
+		mount '/'    => TicTacToe->to_app;
+		mount '/api' => TicTacToe::API->to_app;
+	};
+
+	return $app;
+}
+
+sub get_config {
+	return config;
 }
 
 1;

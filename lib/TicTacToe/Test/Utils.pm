@@ -125,6 +125,7 @@ sub make_game_move {
 
 sub make_game_moves {
 	my %opts = @_;
+	my $test = $opts{test};
 
 	my $game  = $opts{game};
 	my $moves = $opts{moves};
@@ -135,6 +136,7 @@ sub make_game_moves {
 		my ( $index, $symbol ) = ( $move =~ /^(\d)([X|O])$/ );
 		push @responses,
 		  make_game_move(
+			test   => $test,
 			game   => $game,
 			symbol => $symbol,
 			index  => $index,

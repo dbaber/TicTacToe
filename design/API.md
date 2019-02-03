@@ -10,9 +10,9 @@ Tic Tac Toe REST API using Dancer2 and an SQLite database.
 
 When creating a new game we must provide a player1 object with a required name. Player1 also gets to decide who will go
 first and whether or not that player wishes to use an 'X' or 'O' to make their moves. We do this by supplying the
-`player_name`, a `player_mark` of 'X' or 'O' in the payload along with a `goes_first` value of 'X' or 'O' at
-the top-level. The game also starts in the `waiting` status and no moves can be executed until another player joins the
-game with the proper game authorization code. Once the game is joined then the game status changes to `running` status.
+`player_name`, a `player_mark` of 'X' or 'O' in the payload along with a `goes_first` value of 'X' or 'O' at the
+top-level. The game also starts in the `waiting` status and no moves can be executed until another player joins the game
+with the proper game authorization code. Once the game is joined then the game status changes to the `running` status.
 
 **Example Request** - Player wants to be X and go first
 
@@ -66,8 +66,8 @@ In the response above we have 'Dan' choosing the 'X' marker and deciding to go f
 is the current player or the first one to move, the game status is 'waiting' for another player to join (the 'O'
 player), there is no winning player and the game board is empty. The `game_auth_code`, `player1.player_code` and
 `player2.player2_code` are all generated codes. There is also a generated game authorization code that is used to
-validate the join operation.  The generated player codes are used to validate games moves in conjunction with the game
-authorization code.  This is an attempt at simple security and to prevent other people from randomly hijacking a game.
+validate the join operation. The generated player codes are used to validate games moves in conjunction with the game
+authorization code. This is an attempt at simple security and to prevent other people from randomly hijacking a game.
 Althought real user authentication would go a long way, it was decided to not implement that at this time.
 
 Player1 could've easily chose 'O' as his marker when we created the game and deferred from going first. The idea here is
@@ -489,19 +489,24 @@ we checked all 8 win states in the ReST tests.
 
 ## Caveats/Issues
 
-There are a number of caveats/issues with my approach.
+There are a number of caveats/issues with my approach and what I have impelemented thus far.
 
 1. It may be simpler just to implement real user registration/auth so enforcing permissions and deciding on what user
-   codes to display isn't so cumbersome.
+   codes to display isn't so cumbersome. For now I do not have any checks in place preventing other players from seeing
+   player codes that they should not see.
 2. There are most likely concurrency issues with creating games, joining and move operations. If I used PostgreSQL then
    I would most likely have used an advisory lock to serialize access and avoid race conditions. One could also use some
-   sort of optimistic locking as well possibly.
+   sort of optimistic locking as well possibly. I'm sure there are other solutions as well.
 3. I did not implement any sort of REST data/params validation to save some time but I most likely would use
    Params::Validate or Data::Formvalidator. I also didn't validate the data before save()'ing it in the DB tables.
-4. I used SQLite as the backend database but that was just a chosen for ease of administration.
+4. I used SQLite as the backend database but that was just a chosen for ease of administration and ease of
+   building/prepping a test DB for use in tests.
 5. I did not write any unit tests for the Game::TicTacToe namespace modules which were based on Games::TicTacToe on
-   CPAN.
+   CPAN but slightly modified to fit my data model/game play.
 6. I did not end up using or setting win_state_value column in the game board. I don't think it would be too much
    trouble but I am skipping it for now.
 7. I am not handling any exceptions in the endpoints or anywhere really via say Try::Tiny even though Dancer2 does a
-   pretty good job of catching them, you can probably finagle and ugly stack trace inside the error JSON structure.
+   pretty good job of catching them. You can probably finagle and ugly stack trace inside the error JSON structure. The
+   same thing goes for REST params and DB data validation.
+8. I also did not write any POD but if this was a more professional/work app I'd probably force myself to do that or at
+   least get back into the swing of that.

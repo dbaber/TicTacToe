@@ -362,7 +362,7 @@ Location: http://localhost:5000/api/game/1
 **Example Response** - Error moving to an occupied space
 ```
 400 Bad Reauest
-{ "code": 400, "message": "You cannot move to space '0' because it is already occupied"}
+{ "code": 400, "message": "You cannot move to space '1' because it is already occupied"}
 ```
 
 ## Game Win State Conditions

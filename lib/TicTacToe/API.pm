@@ -220,11 +220,14 @@ post '/game/:id/move/:index' => sub {
 		auth_code => $game_r->game_auth_code,
 	);
 
-	#XXX: Break this apart some? We can probably so a separate invalid check based on the board size?
-	send_error( "Cannot move to space '$index' because it is already occupied or invalid.", 400 )
+	send_error( "Cannot move to index '$index' because it is invalid.", 400 )
+	  unless $index >= 1 && $index <= $game->board->get_size;
+
+	send_error( "Cannot move to index '$index' because it is already occupied.", 400 )
 	  unless $game->is_valid_move($index);
 
-	send_error( "Cannot make a move on a board for a game that is over.", 400 ) if $game->is_game_over;
+	#XXX: Either the board is full or the game is 'complete' so this error won't see the light of day anyway
+	# send_error( "Cannot make a move on a board for a game that is over.", 400 ) if $game->is_game_over;
 
 	$game->play($index);
 

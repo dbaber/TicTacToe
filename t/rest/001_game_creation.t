@@ -7,11 +7,11 @@ use Plack::Test;
 use HTTP::Request::Common;
 use JSON;
 
-use TicTacToe::Test;
+use TicTacToe::Test qw(prepare_db get_psgi_app);
 
-TicTacToe::Test::prepare_db();
+prepare_db();
 
-my $app  = TicTacToe::Test::get_psgi_app();
+my $app  = get_psgi_app();
 my $test = Plack::Test->create($app);
 
 # Create a game as 'X' and choose 'X' to go first

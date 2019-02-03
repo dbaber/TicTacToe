@@ -16,6 +16,16 @@ use Plack::Builder;
 use TicTacToe;
 use TicTacToe::API;
 
+use Sub::Exporter -setup => {
+	exports => [
+		qw/
+		  prepare_db
+		  get_psgi_app
+		  get_config
+		  /
+	],
+};
+
 sub prepare_db {
 	my $dbh = schema->storage->dbh;
 

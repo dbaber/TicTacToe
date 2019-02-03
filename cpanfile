@@ -6,6 +6,7 @@ requires 'Type::Tiny'            => '1.004004';
 requires 'Types::UUID'           => '0.004';
 requires 'Dir::Self'             => '0.11';
 requires 'File::Slurp'           => '9999.25';
+requires 'Sub::Exporter'         => '0.987';
 
 recommends 'YAML'             => '0';
 recommends 'URL::Encode::XS'  => '0';

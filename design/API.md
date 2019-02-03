@@ -501,3 +501,5 @@ There are a number of caveats/issues with my approach.
 4. I used SQLite as the backend database but that was just a chosen for ease of administration.
 5. I did not write any unit tests for the Game::TicTacToe namespace modules which were based on Games::TicTacToe on
    CPAN.
+6. I did not end up using or setting win_state_value column in the game board. I don't think it would be too much
+   trouble but I am skipping it for now.

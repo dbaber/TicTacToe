@@ -126,7 +126,9 @@ get '/game/:id' => sub {
 	}
 
 	send_error( "You are not authorized to access this game.", 401 )
-	  unless ( $game_r->game_auth_code eq $x_game_auth_code
+	  unless ( defined $x_user_code
+		&& defined $x_game_auth_code
+		&& $game_r->game_auth_code eq $x_game_auth_code
 		&& ( $game_r->player1->player_code eq $x_user_code || $game_r->player2->player_code eq $x_user_code ) );
 
 	return $game_r->rest_data();

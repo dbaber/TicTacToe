@@ -503,3 +503,5 @@ There are a number of caveats/issues with my approach.
    CPAN.
 6. I did not end up using or setting win_state_value column in the game board. I don't think it would be too much
    trouble but I am skipping it for now.
+7. I am not handling any exceptions in the endpoints or anywhere really via say Try::Tiny even though Dancer2 does a
+   pretty good job of catching them, you can probably finagle and ugly stack trace inside the error JSON structure.

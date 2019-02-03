@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 28;
+use Test::More tests => 27;
 use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
@@ -15,29 +15,14 @@ my $app  = TicTacToe::Test::get_psgi_app();
 my $test = Plack::Test->create($app);
 
 game_not_found: {
-	my $request = POST '/api/game',
-	  Content_Type => 'application/json',
-	  Content      => to_json(
-		{
-			player1 => {
-				player_name => 'Dan',
-				player_mark => 'X',
-			},
-			goes_first => 'X',
-		}
-	  );
-
+	my $request  = GET '/api/game/1';
 	my $response = $test->request($request);
-	is( $response->code, 201, "Created a game as 'Dan' using 'X' and choosing to go first" );
-
-	$request  = GET '/api/game/999999999';
-	$response = $test->request($request);
-	is( $response->code, 404, "... and fetching and invalid game returns a 404" );
+	is( $response->code, 404, "Game not found" );
 	my $decoded = from_json( $response->content );
 	is_deeply(
 		$decoded,
 		{
-			message => "Game not found for id '999999999'.",
+			message => "Game not found for id '1'.",
 			status  => 404,
 			title   => "Error 404 - Not Found",
 		},

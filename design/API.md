@@ -268,7 +268,7 @@ X-Game-Auth-Code: dbd2da0f-e6de-47a5-ac57-c198b13913cf
 **Example Response** - Game not found
 ```
 404 Bad Reauest
-{ "code": 404, "message": "Game with :game_id not found" }
+{ "code": 404, "message": "Game not found for id ':id'." }
 ```
 
 **Example Response** - Not authorized
@@ -297,7 +297,7 @@ upper left corner.
 _Security Note_: In order to make a move on the game board you must have a proper player code and game authorization
 code.
 ```
-POST /api/game/:id/move/0 HTTP/1.1
+POST /api/game/:id/move/:index HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
 {
@@ -339,6 +339,12 @@ Location: http://localhost:5000/api/game/1
     "game_auth_code": "dbd2da0f-e6de-47a5-ac57-c198b13913cf",
     "win_state_value": null
 }
+```
+
+**Example Response** - Game not found
+```
+404 Bad Reauest
+{ "code": 404, "message": "Game not found for id ':id'." }
 ```
 
 **Example Response** - Not authorized

@@ -2,85 +2,26 @@ use strict;
 use warnings;
 
 use Test::More tests => 39;
-use Test::More;
-
 use Plack::Test;
 use HTTP::Request::Common;
 use JSON;
 
-use TicTacToe::Test qw(prepare_db get_psgi_app);
+use TicTacToe::Test qw(
+  prepare_db
+  get_psgi_app
+);
+
+use TicTacToe::Test::Utils qw(
+  create_waiting_game
+  create_running_game
+  make_game_move
+  make_game_moves
+);
 
 prepare_db();
 
 my $app  = get_psgi_app();
 my $test = Plack::Test->create($app);
-
-sub create_waiting_game {
-	my %opts = @_;
-
-	my $request = POST '/api/game',
-	  Content_Type => 'application/json',
-	  Content      => to_json(
-		{
-			player1 => {
-				player_name => $opts{player1_name},
-				player_mark => $opts{player1_mark},
-			},
-			goes_first => $opts{goes_first},
-		}
-	  );
-
-	my $response = $test->request($request);
-	is( $response->code, 201,
-		"Created a game as '$opts{player1_name}' using '$opts{player1_mark}' with '$opts{goes_first}' going first" );
-
-	my $decoded = from_json( $response->content );
-
-	return $decoded;
-}
-
-sub create_running_game {
-	my %opts = @_;
-
-	my $request = POST '/api/game',
-	  Content_Type => 'application/json',
-	  Content      => to_json(
-		{
-			player1 => {
-				player_name => $opts{player1_name},
-				player_mark => $opts{player1_mark},
-			},
-			goes_first => $opts{goes_first},
-		}
-	  );
-
-	my $response = $test->request($request);
-	is( $response->code, 201,
-		"Created a game as '$opts{player1_name}' using '$opts{player1_mark}' with '$opts{goes_first}' going first" );
-
-	my $decoded        = from_json( $response->content );
-	my $game_id        = $decoded->{game_id};
-	my $game_auth_code = $decoded->{game_auth_code};
-
-	$request = POST "/api/game/$game_id/join",
-	  Content_Type => 'application/json',
-	  Content      => to_json(
-		{
-			player2 => {
-				player_name => $opts{player2_name},
-
-			},
-			game_auth_code => $game_auth_code,
-		}
-	  );
-
-	$response = $test->request($request);
-	is( $response->code, 201, "Joining the game as '$opts{player2_name}' works" );
-
-	$decoded = from_json( $response->content );
-
-	return $decoded;
-}
 
 game_not_found_for_move: {
 	my $request  = POST '/api/game/1/move/1';
@@ -99,62 +40,9 @@ game_not_found_for_move: {
 	);
 }
 
-sub get_player_by_symbol {
-	my ( $game, $symbol ) = @_;
-
-	return ( $game->{player1}{player_mark} eq $symbol )
-	  ? ( $game->{player1} )
-	  : ( $game->{player2} );
-}
-
-sub make_game_move {
-	my %opts = @_;
-
-	my $game   = $opts{game};
-	my $symbol = $opts{symbol};
-	my $index  = $opts{index};
-
-	my $game_id        = $game->{game_id};
-	my $player         = get_player_by_symbol( $game, $symbol );
-	my $player_code    = $player->{player_code};
-	my $game_auth_code = $game->{game_auth_code};
-	my $request        = POST "/api/game/$game_id/move/$index",
-	  Content_Type => 'application/json',
-	  Content      => to_json(
-		{
-			player_code    => $player_code,
-			game_auth_code => $game_auth_code,
-		}
-	  );
-
-	my $response = $test->request($request);
-
-	return $response;
-}
-
-sub make_game_moves {
-	my %opts = @_;
-
-	my $game  = $opts{game};
-	my $moves = $opts{moves};
-
-	my @responses = ();
-
-	for my $move (@$moves) {
-		my ( $index, $symbol ) = ( $move =~ /^(\d)([X|O])$/ );
-		push @responses,
-		  make_game_move(
-			game   => $game,
-			symbol => $symbol,
-			index  => $index,
-		  );
-	}
-
-	return \@responses;
-}
-
 not_authorized_to_make_move: {
 	my $game = create_running_game(
+		test         => $test,
 		player1_name => 'Dan',
 		player1_mark => 'X',
 		goes_first   => 'X',
@@ -190,6 +78,7 @@ not_authorized_to_make_move: {
 
 cannot_make_move_on_game_not_running_waiting: {
 	my $game = create_waiting_game(
+		test         => $test,
 		player1_name => 'Dan',
 		player1_mark => 'X',
 		goes_first   => 'X',
@@ -225,6 +114,7 @@ cannot_make_move_on_game_not_running_waiting: {
 
 cannot_move_out_of_turn: {
 	my $game = create_running_game(
+		test         => $test,
 		player1_name => 'Dan',
 		player1_mark => 'X',
 		goes_first   => 'X',
@@ -260,6 +150,7 @@ cannot_move_out_of_turn: {
 
 cannot_move_to_invalid_index: {
 	my $game = create_running_game(
+		test         => $test,
 		player1_name => 'Dan',
 		player1_mark => 'X',
 		goes_first   => 'X',
@@ -267,6 +158,7 @@ cannot_move_to_invalid_index: {
 	);
 
 	my $response = make_game_move(
+		test   => $test,
 		game   => $game,
 		symbol => 'X',
 		index  => 0,
@@ -286,6 +178,7 @@ cannot_move_to_invalid_index: {
 	);
 
 	$response = make_game_move(
+		test   => $test,
 		game   => $game,
 		symbol => 'X',
 		index  => 10,
@@ -307,6 +200,7 @@ cannot_move_to_invalid_index: {
 
 cannot_move_to_occupied_index: {
 	my $game = create_running_game(
+		test         => $test,
 		player1_name => 'Dan',
 		player1_mark => 'X',
 		goes_first   => 'X',
@@ -314,6 +208,7 @@ cannot_move_to_occupied_index: {
 	);
 
 	my $response = make_game_move(
+		test   => $test,
 		game   => $game,
 		symbol => 'X',
 		index  => 1,
@@ -322,6 +217,7 @@ cannot_move_to_occupied_index: {
 	is( $response->code, 201, "Player1 placed an 'X' on index '1'." );
 
 	$response = make_game_move(
+		test   => $test,
 		game   => $game,
 		symbol => 'O',
 		index  => 1,
@@ -355,6 +251,7 @@ cannot_move_to_occupied_index: {
 # Moves: 5X,7O,3X,8O,9X,6O,1X
 cannot_move_on_game_that_is_won_not_running: {
 	my $game = create_running_game(
+		test         => $test,
 		player1_name => 'Dan',
 		player1_mark => 'X',
 		goes_first   => 'X',
@@ -362,6 +259,7 @@ cannot_move_on_game_that_is_won_not_running: {
 	);
 
 	my $responses = make_game_moves(
+		test  => $test,
 		game  => $game,
 		moves => [qw/5X 7O 3X 8O 9X 6O 1X/],
 	);
@@ -385,6 +283,7 @@ cannot_move_on_game_that_is_won_not_running: {
 	is( $decoded->{winning_player_id}, $decoded->{player1_id}, "... and player1 is the winner" );
 
 	$response = make_game_move(
+		test   => $test,
 		game   => $game,
 		symbol => 'O',
 		index  => 2,

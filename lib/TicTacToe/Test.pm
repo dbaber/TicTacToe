@@ -13,9 +13,6 @@ use Dir::Self;
 use File::Slurp qw(slurp);
 use Plack::Builder;
 
-use TicTacToe;
-use TicTacToe::API;
-
 use Sub::Exporter -setup => {
 	exports => [
 		qw/
@@ -25,6 +22,9 @@ use Sub::Exporter -setup => {
 		  /
 	],
 };
+
+use TicTacToe;
+use TicTacToe::API;
 
 sub prepare_db {
 	my $dbh = schema->storage->dbh;

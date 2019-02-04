@@ -1,8 +1,9 @@
 # TicTacToe
 
-A REST API using Dancer2 and SQLite that allows one to play Tic Tac Toe. The game object model/engine was borrowed from
-[Games::TicTacToe](https://metacpan.org/pod/Games::TicTacToe) on [CPAN](https://metacpan.org) and modified quite a bit
-to allow for the unique interaction/play style that is needed for a REST API and accounted for in the design.
+A REST API using Dancer2 Perl web application framework and SQLite that provids a backend API to support playing Tic Tac
+Toe. The game object model or engine was borrowed from [Games::TicTacToe](https://metacpan.org/pod/Games::TicTacToe) on
+[CPAN](https://metacpan.org) and modified quite a bit to allow for the unique interaction and play style that is needed
+for a REST API and accounted for in the design.
 
 __Technical Note__: Please see the [API design doc](design/API.md) for full API documentation and the current status of
 this project as well as any technical discussion about existing caveats and issues.
@@ -90,15 +91,15 @@ api_1  | Watching lib bin/lib bin/app.psgi for file updates.
 api_1  | HTTP::Server::PSGI: Accepting connections at http://0:5000/
 ```
 
-There will be quite a bit of output as all the Perl depenedencies are installed. When all is said and done we should
-have a `tictactoe_api` docker image built for our Dancer2 REST API backend and an `api` service defined in
-docker-compose as well. Make note of these names because they can then be used to run various commands with both
-`docker-compose exec` and `docker run`.
+There will be quite a bit of output as all the Perl dependencies are installed. When all is said and done we should have
+a `tictactoe_api` docker image built for our Dancer2 REST API backend and an `api` service defined in docker-compose as
+well. Make note of these names because they can then be used to run various commands with both `docker-compose exec` and
+`docker run`.
 
 ## Run the Application Locally
 
-After the docker image is initialy built then we may want to start things up by running the following command so as not
-to have to wait for the image to build in subsequent runs.
+After the docker image is initially built we may want to start things up by running the following command so as not to
+have to wait for the image to build in subsequent runs.
 
 ```
 $ docker-compose up
@@ -117,13 +118,13 @@ Here you can then use `docker-compose ps`, `docker-compose stop`, etc. See `dock
 
 ## Run the Tests
 
-You can run all the REST tests with the following docker-compose command after first running `docker-compose up`.
+You can run all the tests with the following docker-compose command after first running `docker-compose up`.
 
 ```
 docker-compose exec api carton exec prove -rlv t/
 ```
 
-Alternatively we can run the following command with `docker` to run the tests.
+Alternatively we can issue the following `docker` command to run all the tests.
 
 ```
 docker run -it --rm -v $PWD:/opt/tictactoe tictactoe_api carton exec prove -rlv t/

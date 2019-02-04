@@ -1,7 +1,7 @@
 # TicTacToe
 
-A REST API using the Dancer2 Perl web application framework and an SQLite databse that provids a backend API to support
-playing Tic Tac Toe. The game object model or engine was borrowed from
+A REST API using the Dancer2 Perl web application framework and an SQLite database that provides a backend API to
+support playing Tic Tac Toe. The game object model or engine was borrowed from
 [Games::TicTacToe](https://metacpan.org/pod/Games::TicTacToe) on [CPAN](https://metacpan.org) and modified quite a bit
 to allow for the unique interaction and play style that is needed for a REST API and accounted for in the design.
 

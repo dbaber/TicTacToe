@@ -82,7 +82,7 @@ __PACKAGE__->table("game");
 =head2 game_board
 
   data_type: 'varchar'
-  default_value: '["_","_","_","_","_","_","_","_","_"]'
+  default_value: '[1,2,3,4,5,6,7,8,9]'
   is_nullable: 0
   size: 255
 
@@ -119,7 +119,7 @@ __PACKAGE__->add_columns(
 	"game_board",
 	{
 		data_type     => "varchar",
-		default_value => "[\"_\",\"_\",\"_\",\"_\",\"_\",\"_\",\"_\",\"_\",\"_\"]",
+		default_value => "[1,2,3,4,5,6,7,8,9]",
 		is_nullable   => 0,
 		size          => 255,
 	},

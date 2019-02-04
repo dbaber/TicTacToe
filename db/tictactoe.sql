@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS game (
     current_player_id   INTEGER,
     winning_player_id   INTEGER,
     game_status_value   VARCHAR(255) NOT NULL,
-    game_board          VARCHAR(255) NOT NULL DEFAULT '["_","_","_","_","_","_","_","_","_"]',
+    game_board          VARCHAR(255) NOT NULL DEFAULT '[1,2,3,4,5,6,7,8,9]',
     game_auth_code      CHAR(36) NOT NULL UNIQUE,
     win_state_value     VARCHAR(255),
     FOREIGN KEY(player1_id)         REFERENCES player(player_id),

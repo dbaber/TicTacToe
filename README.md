@@ -93,7 +93,7 @@ api_1  | HTTP::Server::PSGI: Accepting connections at http://0:5000/
 There will be quite a bit of output as all the Perl depenedencies are installed. When all is said and done we should
 have a `tictactoe_api` docker image built for our Dancer2 REST API backend and an `api` service defined in
 docker-compose as well. Make note of these names because they can then be used to run various commands with both
-`docker-compose exec` and `docker exec`.
+`docker-compose exec` and `docker run`.
 
 ## Run the Application Locally
 

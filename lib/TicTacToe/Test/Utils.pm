@@ -15,7 +15,7 @@ use Sub::Exporter -setup => {
 		  create_running_game
 		  make_game_move
 		  make_game_moves
-
+		  check_game
 		  /
 	],
 };
@@ -144,6 +144,43 @@ sub make_game_moves {
 	}
 
 	return \@responses;
+}
+
+sub check_game {
+	my %opts = @_;
+
+	my $response            = $opts{response};
+	my $game                = $opts{game};
+	my $player1_name        = $opts{player1_name};
+	my $player1_mark        = $opts{player1_mark};
+	my $player2_name        = $opts{player2_name};
+	my $player2_mark        = $opts{player2_mark};
+	my $current_player      = $opts{current_player};
+	my $current_player_mark = $game->{current_player}{player_mark};
+	my $game_status         = $opts{game_status};
+	my $game_board          = $opts{game_board};
+	my $winning_player_id   = $opts{winning_player_id};
+	my $winning_player      = $opts{winning_player};
+
+	like( $response->header('Location'), qr{/api/game/$game->{game_id}}, "...and Location header is set" );
+	is( $game->{player1}{player_name}, $player1_name, "... and player1's name is 'Dan'" );
+	is( $game->{player1}{player_mark}, $player1_mark, "... and player1's mark is 'X'" );
+	is( $game->{player2}{player_name}, $player2_name, "... and player2's name is 'Ben'" );
+	is( $game->{player2}{player_mark}, $player2_mark, "... and player2's mark is 'O'" );
+	ok( $game->{$current_player}{player_code} eq $game->{current_player}{player_code},
+		"... and $current_player or '$current_player_mark' should be the current_player since the game is over" );
+	is( $game->{game_status_value}, 'complete', "... and the game is in the 'complete' status" );
+	isnt( $game->{game_auth_code}, undef, "... and the game auth code was set" );
+	is( $game->{game_board}, $game_board, "... and the game board is in the expected state" );
+
+	if ( defined $game->{winning_player_id} ) {
+		is( $game->{winning_player_id}, $game->{ $winning_player . '_id' }, "... and $winning_player is the winner" );
+	}
+	else {
+		is( $game->{winning_player_id}, undef, "... and there is no winner" );
+	}
+
+	return;
 }
 
 1;

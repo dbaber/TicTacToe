@@ -9,9 +9,7 @@ use JSON;
 use TicTacToe::Test qw(prepare_db get_psgi_app);
 
 use TicTacToe::Test::Utils qw(
-  create_waiting_game
   create_running_game
-  make_game_move
   make_game_moves
   check_game
 );

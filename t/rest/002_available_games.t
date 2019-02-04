@@ -14,7 +14,7 @@ my $app  = get_psgi_app();
 my $test = Plack::Test->create($app);
 
 # No available games to join initially
-no_avavailable_games_initially: {
+no_available_games_initially: {
 	my $request  = GET '/api/game';
 	my $response = $test->request($request);
 	is( $response->code, 200, "Get availble games is working" );

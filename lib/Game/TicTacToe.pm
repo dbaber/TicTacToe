@@ -142,12 +142,6 @@ sub play {
 	return;
 }
 
-sub is_last_move {
-	my ($self) = @_;
-
-	return ( $self->board->available_index !~ /\,/ );
-}
-
 sub is_game_over {
 	my ($self) = @_;
 

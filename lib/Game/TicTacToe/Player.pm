@@ -40,26 +40,6 @@ sub other_symbol {
 	return ( uc( $self->symbol ) eq 'X' ) ? 'O' : 'X';
 }
 
-#XXX: Probably won't use this
-sub desc {
-	my ($self) = @_;
-
-	return ( $self->type eq 'H' ) ? ('Human') : ('Computer');
-}
-
-#XXX: Probably need something a bit different?
-sub get_message {
-	my ($self) = @_;
-
-	if ( $self->type eq 'H' ) {
-		return "<green><bold>Congratulation, you won the game.</bold></green>\n";
-	}
-	else {
-		return "<red><bold>Computer beat you this time. Better luck next
-	time.</bold></red>\n";
-	}
-}
-
 sub db_data {
 	my ($self) = @_;
 

@@ -61,20 +61,6 @@ sub get_cell {
 	}
 }
 
-#XXX: Do I need this?
-sub available_index {
-	my ($self) = @_;
-
-	my $index = '';
-	my $size  = $self->get_size();
-	for my $i ( 1 .. $size ) {
-		$index .= $i . "," if $self->is_call_empty( $i - 1 );
-	}
-	$index =~ s/\,$//g;
-
-	return $index;
-}
-
 sub is_cell_empty {
 	my ( $self, $index ) = @_;
 
@@ -87,7 +73,6 @@ sub cell_contains {
 	return ( $self->get_cell($index) eq $symbol );
 }
 
-#XXX: Give this a better name? Use to find win for player
 sub belongs_to_player {
 	my ( $self, $cells, $player ) = @_;
 
